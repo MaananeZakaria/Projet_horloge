@@ -1,19 +1,27 @@
 import time
 
 def main():
-    # Demander l'heure, les minutes et les secondes initiales
+      
     try:
-        heures = int(input("Entrez l'heure de départ (0-23) : "))
-        minutes = int(input("Entrez les minutes de départ (0-59) : "))
-        seconds = int(input("Entrez les secondes de départ (0-59) : "))
+        heures = int(input("Entrez les heures (0-23) : "))
+        if not 0 <= heures < 24:
+            print("Erreur : Les heures doivent être entre 0 et 23.")
+            return
+
+        minutes = int(input("Entrez les minutes (0-59) : "))
+        if not 0 <= minutes < 60:
+            print("Erreur : Les minutes doivent être entre 0 et 59.")
+            return
+
+        secondes = int(input("Entrez les secondes (0-59) : "))
+        if not 0 <= secondes < 60:
+            print("Erreur : Les secondes doivent être entre 0 et 59.")
+            return
+
+        print(f"Heure valide : {heures:02}:{minutes:02}:{secondes:02}")
     except ValueError:
-        print("Veuillez entrer des nombres valides.")
-        return
-    
-    # Verification et Validation des valeurs entrées
-    if not (0 <= heures < 24 and 0 <= minutes < 60 and 0 <= seconds < 60):
-        print("Les valeurs doivent respecter les plages : heures (0-23), minutes (0-59), secondes (0-59).")
-        return
+        print("Erreur : Veuillez entrer un nombre entier.")
+
 
     
     while True:
@@ -24,11 +32,11 @@ def main():
         if minutes == 60:  
             heures += 1  
             minutes = 0  
-        if heures == 24:  # Vérifie si 24 heures sont atteintes
-            heures = 0  # Réinitialise les heures à 0
+        if heures == 24:  
+            heures = 0  
         
-        # Efface complètement la ligne(l31) et affiche l'heure actuelle (l32)
-        print(f"\r{' ' * 20}", end="")
+        #[Affichage]= ":"(pour le format) , "02" (pour le nombre de chiffres) et 
+        # "d" pour signifier que c'est un nombre entier (decimal)
         print(f"\r{heures:02d}h : {minutes:02d}m : {seconds:02d}s", end="", flush=True)
         time.sleep(1)
 
