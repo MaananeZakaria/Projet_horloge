@@ -20,7 +20,7 @@ def main():
             print("Erreur : Les secondes doivent être entre 0 et 59.")
             return
 
-        print(f"Heure valide : {heures:02}:{minutes:02}:{secondes:02}")
+
     except ValueError:
         print("Erreur : Veuillez entrer un nombre entier.")
         return
