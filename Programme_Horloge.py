@@ -53,9 +53,17 @@ def main():
                 except ValueError:
                     print("Erreur : Veuillez entrer un nombre entier.")
         
-            print(f"Alarme réglée à {heure_alarme:02}:{minute_alarme:02}.")
+            print(f"Votre Alarme réglée à {heure_alarme:02}:{minute_alarme:02}.")
+
+            message_alarme = input("Entrez un message pour l'alarme (facultatif, appuyez sur Entrée pour passer) : ").strip()
+            if not message_alarme:
+                message_alarme = "Réveil ! RDV, Fin de la cuisson, etc."
+
+            print(f"Votre Alarme réglée à {heure_alarme:02}:{minute_alarme:02} avec le message : '{message_alarme}'.")
+        
         else:
-            heure_alarme, minute_alarme = None, None
+            heure_alarme, minute_alarme, message_alarme = None, None, None
+    
         #====================================================================================================
 
     except ValueError:
@@ -83,7 +91,7 @@ def main():
         # ==========  Vérification de l'alarme  ==========
         if not alarme_declenchee and heure_alarme is not None and minute_alarme is not None:
             if heures == heure_alarme and minutes == minute_alarme:
-                print("\nRéveil ! 🚨")
+                print("\n Réveil ! , RDV , Fin de la cuisson , etc.")
                 alarme_declenchee = True  # Marque l'alarme comme déclenchée
 
         # =========  Gestion des modifications ou suppressions de l'alarme ==========
