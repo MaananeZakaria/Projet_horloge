@@ -33,13 +33,13 @@ def main():
         print(f"Heure actuelle réglée : {heures:02}:{minutes:02}:{secondes:02}")
 
         # ===============  Réglage de l'alarme  , Possibilité de saisir directement après l'erreur =============
-        choix = input("Voulez-vous régler une alarme ? (oui/non) : ").strip().lower()
+        choix = input("Voulez-vous régler une alarme ? (oui/non) : ").strip().lower() #strip() pour enlever les espaces inutiles
         if choix == "oui":
             while True:
                 try:
                     heure_alarme = int(input("Entrez l'heure de l'alarme (0-23) : "))
                     if 0 <= heure_alarme < 24:
-                        break
+                        break 
                     print("Erreur : L'heure doit être entre 0 et 23.")
                 except ValueError:
                     print("Erreur : Veuillez entrer un nombre entier.")
@@ -55,6 +55,7 @@ def main():
         
             print(f"Votre Alarme réglée à {heure_alarme:02}:{minute_alarme:02}.")
 
+
             message_alarme = input("Entrez un message pour l'alarme (facultatif, appuyez sur Entrée pour passer) : ").strip()
             if not message_alarme:
                 message_alarme = "Réveil ! RDV, Fin de la cuisson, etc."
@@ -62,7 +63,7 @@ def main():
             print(f"Votre Alarme réglée à {heure_alarme:02}:{minute_alarme:02} avec le message : '{message_alarme}'.")
         
         else:
-            heure_alarme, minute_alarme, message_alarme = None, None, None
+            heure_alarme, minute_alarme, message_alarme = None, None, None  #réinisialisation des variables
     
         #====================================================================================================
 
@@ -91,7 +92,7 @@ def main():
         # ==========  Vérification de l'alarme  ==========
         if not alarme_declenchee and heure_alarme is not None and minute_alarme is not None:
             if heures == heure_alarme and minutes == minute_alarme:
-                print("\n Réveil ! , RDV , Fin de la cuisson , etc.")
+                print(f"\n C'est l'heure {message_alarme}")
                 alarme_declenchee = True  # Marque l'alarme comme déclenchée
 
         # =========  Gestion des modifications ou suppressions de l'alarme ==========
@@ -107,12 +108,13 @@ def main():
                         heures = valeur
                     elif choix == "m" and 0 <= valeur < 60:
                         minutes = valeur
-                    elif choix == "s" and 0 <= valeur < 60:
+                    elif choix == "s" and 0 <= valeur < 60: # on a mis les s pour les chronos
                         secondes = valeur
                     else:
                         print("Erreur : Valeur hors limites.")
                 except ValueError:
                     print("Erreur : Veuillez entrer un nombre entier.")
+
             elif choix == "d":
                 heure_alarme, minute_alarme = None, None
                 print("Alarme supprimée.")
