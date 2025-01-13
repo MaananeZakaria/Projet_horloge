@@ -26,7 +26,7 @@ def main():
 
 
 def heure_locale():
-    heures = int(time.strftime('%H'))
+    heures = int(time.strftime('%H')) #strftime(%) pour formater l'heure 
     minutes = int(time.strftime('%M'))
     secondes = int(time.strftime('%S'))
     return heures, minutes, secondes
