@@ -1,15 +1,36 @@
 import time
+from datetime import datetime
 
 def main():
-    heures, minutes, secondes = saisie_de_heure()
-    heure_alarme, minute_alarme, secondes_alarme, message_alarme = saisie_alarme()
+    choix = input("Souhaitez-vous régler l'heure manuellement ou utiliser l'heure locale de votre PC ? (manuel/local) : ").strip().lower()
+
+    if choix == "local":
+        heures, minutes, secondes = heure_locale()
+    elif choix == "manuel":
+        heures, minutes, secondes = saisie_de_heure()
+    else:
+        print("Choix invalide. Utilisation de l'heure locale par défaut.")
+        heures, minutes, secondes = heure_locale()
+
+    heure_alarme, minute_alarme, seconde_alarme, message_alarme = saisie_alarme()
 
     print(f"Heure actuelle réglée : {heures:02}:{minutes:02}:{secondes:02}")
-    
-    if heure_alarme is not None and minute_alarme is not None and secondes_alarme is not None:
-        print(f"Alarme réglée à : {heure_alarme:02}:{minute_alarme:02}:{secondes_alarme:02} ; {message_alarme}") #ajout des s pour les chronos
+    if heure_alarme is not None:
+        print(f"Alarme réglée à : {heure_alarme:02}:{minute_alarme:02}:{seconde_alarme}")
 
-    boucle_principale(heures, minutes, secondes, heure_alarme, minute_alarme , secondes_alarme , message_alarme)
+    # Afficher les options une seule fois au début
+    afficher_options()
+    
+    # Démarrer la boucle principale
+    boucle_principale(heures, minutes, secondes, heure_alarme, minute_alarme, seconde_alarme, message_alarme)
+
+
+def heure_locale():
+    heures = int(time.strftime('%H'))
+    minutes = int(time.strftime('%M'))
+    secondes = int(time.strftime('%S'))
+    return heures, minutes, secondes
+
 
 def saisie_de_heure():
     while True:
@@ -41,8 +62,9 @@ def saisie_de_heure():
 
     return heures, minutes, secondes
 
+
 def saisie_alarme():
-    choix = input("Voulez-vous régler une alarme ? (oui/non) : ").strip().lower() #espaces et majuscules
+    choix = input("Voulez-vous régler une alarme ? (oui/non) : ").strip().lower()
     if choix == "oui":
         while True:
             try:
@@ -61,33 +83,37 @@ def saisie_alarme():
                 print("Erreur : Les minutes doivent être entre 0 et 59.")
             except ValueError:
                 print("Erreur : Veuillez entrer un nombre entier.")
-        
+
         while True:
             try:
-                secondes_alarme = int(input("Entrez les secondes de l'alarme (0-59) : "))
-                if 0 <= secondes_alarme < 60:
+                seconde_alarme = int(input("Entrez les secondes de l'alarme (0-59) : "))
+                if 0 <= seconde_alarme < 60:
                     break
-                print("Erreur : Les minutes doivent être entre 0 et 59.")
+                print("Erreur : Les secondes doivent être entre 0 et 59.")
             except ValueError:
-                print("Erreur : Veuillez entrer un nombre entier.")  
-        
-        #Possibilité de saisir un message pour l'alarme
+                print("Erreur : Veuillez entrer un nombre entier.")
+
         message_alarme = input("Entrez un message pour l'alarme (facultatif, appuyez sur Entrée pour passer) : ").strip()
         if not message_alarme:
-                message_alarme = "Réveil ! RDV, Fin de la cuisson, etc."
-        
+            message_alarme = "Réveil ! RDV, Fin de la cuisson, etc."
+
+        return heure_alarme, minute_alarme, seconde_alarme, message_alarme
+    return None, None, None, None
 
 
-        return heure_alarme, minute_alarme , secondes_alarme , message_alarme
-    return None, None, None
+def afficher_options():
+    print("\nOptions disponibles :")
+    print("1. Modifier l'alarme")
+    print("2. Modifier l'heure")
+    print("3. Supprimer l'alarme")
+    print("4. Continuer")
 
-def boucle_principale(heures, minutes, secondes, heure_alarme, minute_alarme , secondes_alarme, message_alarme):
+
+def boucle_principale(heures, minutes, secondes, heure_alarme, minute_alarme, seconde_alarme, message_alarme):
     alarme_declenchee = False
-    modification_alarme_possible = True
-    modification_heure_possible = True
+    afficher_menu = True
 
     while True:
-
         secondes += 1
         if secondes == 60:
             secondes = 0
@@ -98,59 +124,44 @@ def boucle_principale(heures, minutes, secondes, heure_alarme, minute_alarme , s
         if heures == 24:
             heures = 0
 
-        # Affichage de l'heure , end="" permet de ne pas sauter de ligne et flush=True permet de forcer l'affichage
-        print(f"\r{heures:02}h:{minutes:02}m:{secondes:02}s", end="", flush=True)
+        # Afficher l'heure
+        print(f"\r{heures:02}:{minutes:02}:{secondes:02}", end="", flush=True)
 
-        # -------------Vérification de l'alarme-----------
-        if not alarme_declenchee and heure_alarme is not None and minute_alarme is not None and secondes_alarme is not None:
-
-            if heures == heure_alarme and minutes == minute_alarme and secondes == secondes_alarme: # Compare l'heure actuelle avec l'heure de l'alarme
-                print(f"\n\aC'est l'heure ! {message_alarme}")    # \a pour le bip
+        # Vérifier si l'alarme doit se déclencher
+        if not alarme_declenchee and heure_alarme is not None:
+            if heures == heure_alarme and minutes == minute_alarme and secondes == seconde_alarme:
+                print(f"\n\aC'est l'heure ! {message_alarme}")
                 alarme_declenchee = True
 
-        # ----permettre la modification de l'alarme ( version modifiée )--
-        if modification_alarme_possible:
-            choix_modif = input("Souhaitez-vous modifier l'alarme ? (oui/non) : ").strip().lower()
-            if choix_modif == "oui":
-                heure_alarme, minute_alarme , secondes_alarme = saisie_alarme() # Re-saisie de l'alarme
+        # Proposer les choix une seule fois au début
+        if afficher_menu:
+            choix = input("\nEntrez votre choix (1-4) : ").strip()
+            afficher_menu = False  # Ne plus afficher le menu après la première fois
 
-                alarme_declenchee = False  # Réinitialisation de l'état de l'alarme
-                print(f"Nouvelle alarme réglée à : {heure_alarme:02}:{minute_alarme:02}:{secondes_alarme:02}")
-
-            elif choix_modif == "non":
-                modification_alarme_possible = False
-
-         # =========  Modifications de l'heure ou suppressions de l'alarme ==========
-        if modification_heure_possible:
-            print("\n Souhaitez-vous modifier l'heure ou supprimer l'alarme ? Si oui tapez h/m/s/d, sinon tapez non.")
-            choix = input("h/m/s pour changer l'heure, d pour supprimer l'alarme ").strip().lower()
-            modification_heure_possible = False  # ----- Empêche la répétition du message
-
-            if choix in ["h", "m", "s"]:
-                try:
-                    valeur = int(input("Entrez la nouvelle valeur : "))
-
-                    if choix == "h" and 0 <= valeur < 24:
-                        heures = valeur
-                    elif choix == "m" and 0 <= valeur < 60:
-                        minutes = valeur
-                    elif choix == "s" and 0 <= valeur < 60: # on a mis les s pour les chronos
-                        secondes = valeur
-                    else:
-                        print("Erreur : Valeur hors limites.")
-                except ValueError:
-                    print("Erreur : Veuillez entrer un nombre entier.")
-
-            elif choix == "d":
-                heure_alarme, minute_alarme = None, None
-                print("Alarme supprimée.")
+            if choix == "1":
+                heure_alarme, minute_alarme, seconde_alarme, message_alarme = saisie_alarme()
                 alarme_declenchee = False
-            elif choix == "non":
-                print("Aucune modification effectuée.")
+                afficher_menu = True  # Réafficher le menu si nécessaire
+            elif choix == "2":
+                try:
+                    heures = int(input("Entrez la nouvelle heure (0-23) : "))
+                    minutes = int(input("Entrez les nouvelles minutes (0-59) : "))
+                    secondes = int(input("Entrez les nouvelles secondes (0-59) : "))
+                except ValueError:
+                    print("Erreur : Veuillez entrer des nombres valides.")
+                afficher_menu = True
+            elif choix == "3":
+                heure_alarme, minute_alarme, seconde_alarme, message_alarme = None, None, None, None
+                print("Alarme supprimée.")
+                afficher_menu = True
+            elif choix == "4":
+                print("Reprise du décompte sans modification.")
             else:
-                print("Option invalide.")
+                print("Choix invalide.")
+                afficher_menu = True
 
         time.sleep(1)
+
 
 if __name__ == "__main__":
     main()
